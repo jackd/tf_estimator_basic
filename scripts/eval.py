@@ -7,19 +7,22 @@ from __future__ import print_function
 import argparse
 
 
-def evaluate(model_dir, batch_size):
+def evaluate(model_id):
     import tensorflow as tf
-    from tf_estimator_basic.model import get_estimator_spec
-    from tf_estimator_basic.data import get_inputs
+    if model_id == 'simple':
+        import tf_estimator_basic.simple as model
+    elif model_id == 'intermediate':
+        import tf_estimator_basic.intermediate as model
+
     tf.logging.set_verbosity(tf.logging.INFO)
-    estimator = tf.estimator.Estimator(get_estimator_spec, model_dir)
-    estimator.evaluate(lambda: get_inputs('eval', batch_size))
+    estimator = model.get_estimator()
+    estimator.evaluate(lambda: model.get_inputs('eval'))
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    '-d', '--model_dir', default='/tmp/tf_estimator_basic')
-parser.add_argument('-b', '--batch_size', type=int, default=64)
+    'model_id', default='simple', nargs='?',
+    choices=('simple', 'intermediate'))
 args = parser.parse_args()
 
-evaluate(args.model_dir, args.batch_size)
+evaluate(args.model_id)

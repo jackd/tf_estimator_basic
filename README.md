@@ -11,11 +11,13 @@ cd tf_estimator_basic
 ```
 
 # File Overview
-* `model.py`: defines the inference/training model used throughout.
-* `data.py`: `tf.data.Dataset` augmentation/manipulation, used for training and evaluation.
+* `simple.py`: very basic data/inference/evaluation model.
+* `intermediate.py`: slightly more complicated data/inference/evaluation model.
 * `dummy_server.py`: class used in `scripts/dummy_server.py` demonstrating manual session management with models trained with an estimator.
 
 ## Scripts
+All scripts have a single argument - `model_id` which must be one of "simple" or "intermediate", e.g. `./train.py intermediate`. This defaults to "simple" for all except `clean.py` (for which one must be specified).
+
 * `train.py`: trains the basic model.
 * `eval.py`: evaluates a pre-trained model.
 * `run_server.py`: runs a simple serving example.
@@ -33,14 +35,13 @@ cd scripts
 
 Progress can be observed using tensorboard
 ```
-tensorboard --logdir=/tmp/tf_estimator_basic
+tensorboard --logdir=/tmp/mnist_simple
+```
+or
+```
+tensorboard --logdir=/tmp/mnist_intermediate
 ```
 
-By default, models files are saved to/loaded from `/tmp/tf_estimator_basic`. This can be changed with the `-d` flag in scripts.
-```
-./train.py -d /path/to/custom_dir
-./eval.py -d /path/to/custom_dir
-tensorboard --logdir=/path/to/custom_dir
-```
+Models and data are saved to `/tmp/mnist_data/`, `/tmp/mnist_simple/` and `/tmp/mnist_intermediate/`. Note the default `/tmp` directory is normally deleted upon computer reboot.
 
-Note the default `/tmp` directory is normally deleted upon computer reboot.
+For a more comprehensive write-up, see the [blog post](blog.md)

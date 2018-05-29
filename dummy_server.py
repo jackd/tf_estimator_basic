@@ -11,7 +11,8 @@ import tensorflow as tf
 
 
 class DummyServer(object):
-    def __init__(self, model_dir):
+    def __init__(self, logits_fn, model_dir):
+        self.logits_fn = logits_fn
         self.model_dir = model_dir
         self._sess = None
 
@@ -23,7 +24,6 @@ class DummyServer(object):
         self.close()
 
     def open(self):
-        from .model import get_logits
         print('Opening DummyServer...')
         print('  building graph...')
         graph = tf.Graph()
@@ -34,7 +34,7 @@ class DummyServer(object):
             image = tf.expand_dims(image, axis=-1)
             image = tf.cast(image, tf.float32) / 255
 
-            logits = get_logits(image, mode='infer')
+            logits = self.logits_fn(image)
             self._probs = tf.nn.softmax(logits, axis=-1)
             saver = tf.train.Saver()
 

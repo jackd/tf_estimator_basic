@@ -1,28 +1,34 @@
 #!/usr/bin/python
 """Prediction script."""
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
 import argparse
 
 
-def predict(model_dir, batch_size):
+def predict(model_id):
     import tensorflow as tf
     import matplotlib.pyplot as plt
-    from tf_estimator_basic.model import get_estimator_spec
-    from tf_estimator_basic.data import get_inputs
+    if model_id == 'simple':
+        import tf_estimator_basic.simple as model
+    elif model_id == 'intermediate':
+        import tf_estimator_basic.intermediate as model
+
     tf.logging.set_verbosity(tf.logging.INFO)
-    estimator = tf.estimator.Estimator(get_estimator_spec, model_dir)
+    estimator = model.get_estimator()
     predictions = estimator.predict(
-        lambda: get_inputs('infer', batch_size))
+        lambda: model.get_inputs('infer'))
     for preds in predictions:
-        print preds['probs']
-        plt.imshow(preds['image'][:, :, 0])
-        plt.title(preds['preds'], cmap='gray')
+        print(preds['probs'])
+        plt.imshow(preds['image'][:, :, 0], cmap='gray')
+        plt.title(preds['preds'])
         plt.show()
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    '-d', '--model_dir', default='/tmp/tf_estimator_basic')
-parser.add_argument('-b', '--batch_size', type=int, default=64)
+    'model_id', default='simple', nargs='?',
+    choices=('simple', 'intermediate'))
 args = parser.parse_args()
-
-predict(args.model_dir, args.batch_size)
+predict(args.model_id)
