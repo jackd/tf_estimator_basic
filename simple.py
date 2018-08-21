@@ -104,5 +104,6 @@ def get_estimator_spec(features, labels, mode):
 model_dir = '/tmp/mnist_simple'
 
 
-def get_estimator():
-    return tf.estimator.Estimator(get_estimator_spec, model_dir)
+def get_estimator(config=None):
+    return tf.estimator.Estimator(
+        get_estimator_spec, model_dir, config=config)
